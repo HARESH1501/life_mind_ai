@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14-alpine
+    container_name: lifemind-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-lifemind_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lifemind_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-lifemind_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - lifemind-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: lifemind-redis
+    restart: always
+    networks:
+      - lifemind-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lifemind-backend
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-lifemind_user}:${POSTGRES_PASSWORD:-lifemind_pass}@db:5432/${POSTGRES_DB:-lifemind_db}
+      - REDIS_URL=redis://redis:6379/0
+      - ENVIRONMENT=production
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-production}
+      - ALLOWED_ORIGINS=http://localhost,http://localhost:80,http://localhost:5173
+    depends_on:
+      - db
+      - redis
+    networks:
+      - lifemind-network
+    expose:
+      - "8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lifemind-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - lifemind-network
+
+networks:
+  lifemind-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

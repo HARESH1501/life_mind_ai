@@ -1,0 +1,92 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.Python
+venv/
+ENV/
+env/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build files
+dist/
+build/
+*.egg
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Temp files
+*.tmp
+*.temp
+.cache/
+
+# Node
+npm-debug.log
+yarn-error.log
+.npm
+
+# Testing
+.coverage
+.pytest_cache/
+
+# Documentation (keep only essential ones)
+FINAL_*.md
+COMPLETE_*.md
+COMPLETION_*.md
+VERIFY_*.py
+CHECK_*.py
+QUICK_*.py
+REAL_*.py
+DEBUGGING_*.md
+DEBUG_*.md
+FIX_*.md
+SETUP_GUIDE.md
+QUICK_FIX_REFERENCE.md
+QUICK_START.md
+QUICK_LOGIN_REFERENCE.md
+QUICK_TEST_GUIDE.md
+LOGIN_FIX_SUMMARY.md
+REVERTED_*.md
+PERSISTENCE_ARCHITECTURE_GUIDE.md
+PROOF_OF_IMPLEMENTATION.md
+AUTHENTICATION_FIX_INDEX.md
+AUTHENTICATION_JWT_FIX.md
+AUTH_DEBUGGING_GUIDE.md
+DATA_PERSISTENCE_FIX.md
+DATA_PERSISTENCE_INDEX.md
+FRONTEND_DEBUG_TEST.md
+
+# Keep important documentation
+!SETTINGS_MODULE_COMPLETE.md
+!SETTINGS_ARCHITECTURE.md
+!QUICK_START_SETTINGS.md
+!SETTINGS_BACKEND_INTEGRATION_COMPLETE.txt
+!SETTINGS_INTEGRATION_COMPLETE.md
+!README.md
+!DEVELOPER_QUICK_START.md
+!DEPLOY_QUICK_START.md
+!EMAIL_SETUP_QUICK_START.md

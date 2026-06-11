@@ -1,0 +1,12 @@
+/* Conflicting styles removed. All global styles are now in index.css */
+/* Specific App-level styles can be added here if needed */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

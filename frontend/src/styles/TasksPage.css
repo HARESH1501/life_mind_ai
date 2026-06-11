@@ -1,0 +1,152 @@
+/* Tasks Page Styles */
+
+.tasks-container {
+  padding: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.tasks-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.task-form {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 30px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-color);
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-item {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.task-item:hover {
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.task-item.completed {
+  opacity: 0.6;
+}
+
+.task-item.completed .task-info h3 {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.task-checkbox {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ddd;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.task-checkbox:hover {
+  color: #667eea;
+}
+
+.task-item.completed .task-checkbox {
+  color: #26de81;
+}
+
+.task-info {
+  flex: 1;
+}
+
+.task-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  color: var(--text-primary);
+}
+
+.task-description {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+.task-priority {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  flex-shrink: 0;
+}
+
+.task-priority.red {
+  background: #ffe0e0;
+  color: #d32f2f;
+}
+
+.task-priority.yellow {
+  background: #fff3cd;
+  color: #ff9800;
+}
+
+.task-priority.green {
+  background: #e8f5e9;
+  color: #26de81;
+}
+
+.task-priority.gray {
+  background: #f5f5f5;
+  color: #999;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .tasks-container {
+    padding: 20px;
+  }
+
+  .tasks-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .task-item {
+    flex-wrap: wrap;
+  }
+
+  .task-priority {
+    order: 3;
+    width: 100%;
+  }
+}

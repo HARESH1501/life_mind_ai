@@ -1,0 +1,140 @@
+/* Habits Page Styles */
+
+.habits-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.habits-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.habits-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.habit-form {
+  @apply glass-panel;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.habits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.habit-card {
+  @apply glass-panel-hover;
+  padding: 1.5rem;
+  border-left: 4px solid var(--primary-color);
+}
+
+.habit-card:hover {
+  transform: translateY(-4px);
+}
+
+.habit-card.completed {
+  opacity: 0.8;
+  border-left-color: #10b981;
+}
+
+.habit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.habit-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-main);
+  flex: 1;
+}
+
+.habit-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.habit-toggle:hover {
+  background: var(--input-bg);
+  color: var(--primary-color);
+}
+
+.habit-card.completed .habit-toggle {
+  color: #10b981;
+}
+
+.habit-frequency {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.habit-description {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0.75rem 0;
+  line-height: 1.6;
+}
+
+.habit-streak {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  color: #f43f5e;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 5rem 2rem;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  grid-column: 1 / -1;
+  @apply glass-panel;
+}
+
+@media (max-width: 768px) {
+  .habits-container {
+    padding: 1rem;
+  }
+
+  .habits-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .habits-grid {
+    grid-template-columns: 1fr;
+  }
+}

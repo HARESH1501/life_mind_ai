@@ -1,0 +1,370 @@
+/* Advanced Glassmorphic Dashboard Styles */
+
+.dashboard-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  margin-bottom: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  background: linear-gradient(135deg, var(--text-main), var(--primary-color));
+  @apply bg-clip-text text-transparent;
+  letter-spacing: -0.03em;
+}
+
+.dashboard-header p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-card {
+  @apply glass-panel-hover;
+  padding: 1.5rem;
+  border-left: 4px solid;
+}
+
+.dashboard-card.blue {
+  border-left-color: var(--primary-color);
+}
+
+.dashboard-card.green {
+  border-left-color: #10b981;
+}
+
+.dashboard-card.orange {
+  border-left-color: #f97316;
+}
+
+.dashboard-card.purple {
+  border-left-color: var(--accent-purple);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-header h3 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card-header svg {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.card-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+/* Productivity & Wellness Score Section */
+.scores-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 900px) {
+  .scores-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.score-card {
+  @apply glass-panel;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+}
+
+.score-info h2 {
+  font-size: 1.25rem;
+  font-weight: 750;
+  margin: 0 0 4px 0;
+  color: var(--text-main);
+}
+
+.score-info p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.radial-progress-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radial-progress-bg {
+  fill: none;
+  stroke: var(--border-color);
+  stroke-width: 8px;
+}
+
+.radial-progress-bar {
+  fill: none;
+  stroke-width: 8px;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.score-text {
+  position: absolute;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.025em;
+}
+
+/* Charts & Lists layout */
+.dashboard-layout-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-section {
+  @apply glass-panel;
+  padding: 2rem;
+}
+
+.dashboard-section h2 {
+  font-size: 1.25rem;
+  font-weight: 750;
+  margin: 0 0 1.5rem 0;
+  color: var(--text-main);
+  border-left: 4px solid var(--primary-color);
+  padding-left: 12px;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--input-bg);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.category-item:hover {
+  background: var(--glass-hover);
+  border-color: var(--border-color);
+  transform: translateX(4px);
+}
+
+.category-name {
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+.category-amount {
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 1rem;
+}
+
+/* Habit Streaks widget */
+.streaks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.streak-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.streak-item:hover {
+  background: var(--glass-hover);
+  border-color: var(--border-hover);
+}
+
+.streak-name {
+  font-weight: 650;
+  color: var(--text-main);
+}
+
+.streak-freq {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 2px;
+  letter-spacing: 0.05em;
+}
+
+.streak-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(251, 191, 36, 0.1);
+  color: var(--accent-gold);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 750;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+/* AI Productivity Coach Panel */
+.ai-coach-panel {
+  background: linear-gradient(135deg, rgba(var(--primary-color), 0.05), rgba(var(--accent-purple), 0.05));
+  border: 1px solid var(--border-color);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-coach-panel::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, var(--primary-glow) 0%, transparent 70%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.ai-coach-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.ai-coach-header h2 {
+  font-size: 1.25rem;
+  font-weight: 850;
+  color: var(--primary-color);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.ai-coach-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  background: var(--input-bg);
+  padding: 4px;
+  border-radius: 12px;
+  position: relative;
+}
+
+.ai-coach-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.ai-coach-tab.active {
+  background: var(--bg-card);
+  color: var(--primary-color);
+  box-shadow: var(--card-shadow);
+}
+
+.ai-content {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-main);
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.ai-recommendation-item {
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.ai-recommendation-item:hover {
+  transform: scale(1.02);
+  border-color: var(--primary-color);
+}
+
+.ai-rec-name {
+  font-weight: 750;
+  color: var(--primary-color);
+  font-size: 0.95rem;
+}
+
+.ai-rec-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
