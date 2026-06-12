@@ -34,7 +34,7 @@ PROJECT_VERSION = "1.0.0"
 # CORS
 ALLOWED_ORIGINS = os.getenv(
     "ALLOWED_ORIGINS",
-    "http://localhost:5173,http://localhost:3000"
+    "https://life-mind-frontend.onrender.com,http://localhost:5173,http://localhost:3000"
 ).split(",")
 
 # AI
@@ -46,7 +46,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 DEFAULT_PAGE_SIZE = 20
 MAX_PAGE_SIZE = 100
 
-# ============ EMAIL CONFIGURATION ============
+# Email Configuration
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER = os.getenv("SMTP_USER", "")
@@ -61,7 +61,7 @@ ENABLE_TASK_REMINDERS = os.getenv("ENABLE_TASK_REMINDERS", "true").lower() == "t
 ENABLE_MEETING_REMINDERS = os.getenv("ENABLE_MEETING_REMINDERS", "true").lower() == "true"
 ENABLE_DAILY_SUMMARY = os.getenv("ENABLE_DAILY_SUMMARY", "true").lower() == "true"
 
-# ============ SCHEDULER CONFIGURATION ============
+# Scheduler
 SCHEDULER_ENABLED = os.getenv("SCHEDULER_ENABLED", "true").lower() == "true"
 SCHEDULER_TIMEZONE = os.getenv("SCHEDULER_TIMEZONE", "UTC")
 
