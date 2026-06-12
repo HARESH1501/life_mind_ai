@@ -1,37 +1,34 @@
-{
-  "name": "lifemind-ai-frontend",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "format": "prettier --write \"src/**/*.{js,jsx,css}\""
-  },
- "dependencies": {
-  "axios": "^1.6.0",
-  "react": "^18.3.1",
-  "react-dom": "^18.3.1",
-  "react-router-dom": "^6.28.0",
-  "zustand": "^4.5.5",
-  "framer-motion": "^11.18.2",
-  "recharts": "^2.15.4",
-  "lucide-react": "^0.525.0"
-},
-"devDependencies": {
-  "@eslint/js": "^9.30.1",
-  "@types/react": "^18.3.12",
-  "@types/react-dom": "^18.3.1",
-  "@vitejs/plugin-react": "^4.7.0",
-  "eslint": "^9.30.1",
-  "eslint-plugin-react-hooks": "^5.2.0",
-  "eslint-plugin-react-refresh": "^0.4.20",
-  "globals": "^16.3.0",
-  "vite": "^5.4.19",
-  "tailwindcss": "^3.4.17",
-  "postcss": "^8.5.6",
-  "autoprefixer": "^10.4.21"
-}
-}
+# FastAPI & Web Framework
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Database
+sqlalchemy
+
+# Authentication & Security
+python-jose[cryptography]
+passlib[bcrypt]
+argon2-cffi
+python-dotenv
+
+# Email & Notifications
+fastapi-mail
+aiosmtplib
+email-validator
+
+# Scheduling & Background Tasks
+apscheduler
+pytz
+
+# Utilities
+requests
+pydantic-settings
+
+# AI
+groq
+google-generativeai
+
+# Development
+black==23.12.0
+flake8==6.1.0
