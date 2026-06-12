@@ -313,6 +313,12 @@ def update_email_preferences(
     if preferences.daily_summary is not None:
         settings.daily_summary = preferences.daily_summary
     
+    if preferences.daily_summary_email is not None:
+        settings.daily_summary_email = preferences.daily_summary_email
+    
+    if preferences.welcome_email is not None:
+        settings.welcome_email = preferences.welcome_email
+    
     if preferences.daily_summary_time is not None:
         if not validate_time_format(preferences.daily_summary_time):
             raise HTTPException(

@@ -308,6 +308,8 @@ class EmailPreferencesUpdate(BaseModel):
     email_meeting_reminders: Optional[bool] = None
     daily_summary: Optional[bool] = None
     daily_summary_time: Optional[str] = None
+    daily_summary_email: Optional[bool] = None
+    welcome_email: Optional[bool] = None
 
 
 class SecurityUpdate(BaseModel):

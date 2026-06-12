@@ -1,333 +1,182 @@
-# 🚀 LifeMind AI - AI-Powered Personal Life Assistant Platform
+# LifeMind AI - Life Optimization Platform
 
-A world-class, production-grade SaaS platform that combines AI intelligence with personal life management. LifeMind AI helps users optimize their productivity, manage finances, build habits, and improve overall wellness.
+![LifeMind AI](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
+![React](https://img.shields.io/badge/React-19.2.6-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)
+![Python](https://img.shields.io/badge/Python-3.11-yellow)
 
-## 🎯 Project Vision
+A comprehensive AI-powered life optimization platform that helps users track habits, manage tasks, monitor expenses, log mood, and receive personalized AI coaching.
 
-LifeMind AI is an intelligent ecosystem combining:
-- **AI Personal Assistant** - Smart recommendations and insights
-- **Expense Tracker** - Financial management with AI analysis
-- **Productivity Manager** - Task and time management
-- **Habit Tracker** - Build and maintain daily habits
-- **Smart Planner** - AI-powered scheduling
-- **Mood & Wellness Analyzer** - Mental health tracking
-- **Analytics Dashboard** - Comprehensive insights and reports
+## 🌟 Features
 
-## 🏗️ Architecture Overview
+### Core Features
+- 📊 **Dashboard** - Comprehensive overview of your life metrics
+- ✅ **Habit Tracking** - Build and maintain healthy habits with streak tracking
+- 📝 **Task Management** - Organize and prioritize your daily tasks
+- 💰 **Expense Tracking** - Monitor spending and manage budget
+- 😊 **Mood Logging** - Track emotional well-being and energy levels
+- 📅 **Meeting Scheduler** - Plan and manage meetings with reminders
+- ⚙️ **Advanced Settings** - Customize your experience
 
-### Frontend Stack
-- **React 19** - Modern UI framework
-- **Vite** - Lightning-fast build tool
-- **Zustand** - State management
-- **Framer Motion** - Smooth animations
-- **Recharts** - Data visualization
-- **Tailwind CSS** - Utility-first styling
-- **Lucide React** - Beautiful icons
+### AI-Powered Features
+- 🤖 **AI Coach** - Personalized life coaching using Groq LLaMA 3.3 70B
+- 💡 **Smart Insights** - AI-generated recommendations and analysis
+- 📈 **Predictive Analytics** - Understand patterns and trends
+- 🎯 **Goal Optimization** - AI-driven goal setting and tracking
 
-### Backend Stack
-- **FastAPI** - High-performance Python framework
-- **SQLAlchemy** - ORM for database operations
-- **Pydantic** - Data validation
-- **JWT** - Secure authentication
-- **SQLite** (Development) / **PostgreSQL** (Production)
+### Settings & Customization
+- 🎨 **Theme Switching** - Light/Dark/System with instant preview
+- 🌈 **Accent Colors** - 10 color options with instant application
+- 🔔 **Notifications** - Granular control over all notification types
+- 📧 **Email Preferences** - Customizable email notifications
+- 🔒 **Security** - Password management, 2FA, session control
+- 💾 **Data Export** - Export all your data anytime
 
-### AI & Analytics
-- **Google Gemini API** - AI recommendations
-- **OpenAI API** - Advanced NLP
-- **Pandas** - Data analysis
-- **Sentiment Analysis** - Mood tracking
+## 🚀 Tech Stack
 
-## 📁 Project Structure
+### Frontend
+- **Framework**: React 19.2.6 + Vite
+- **Routing**: React Router v6
+- **State Management**: Zustand
+- **Animations**: Framer Motion 11
+- **Charts**: Recharts
+- **Icons**: Lucide React
+- **HTTP Client**: Axios
+- **Styling**: Custom CSS with CSS Variables
 
-```
-LifeMind-AI/
-├── frontend/
-│   ├── src/
-│   │   ├── components/        # Reusable UI components
-│   │   ├── pages/             # Page components
-│   │   ├── store/             # Zustand stores
-│   │   ├── config/            # Configuration files
-│   │   ├── styles/            # CSS modules
-│   │   ├── App.jsx            # Main app component
-│   │   └── main.jsx           # Entry point
-│   ├── .env                   # Environment variables
-│   └── package.json           # Dependencies
-│
-├── backend/
-│   ├── routers/               # API route handlers
-│   ├── models.py              # Database models
-│   ├── schemas.py             # Pydantic schemas
-│   ├── crud.py                # Database operations
-│   ├── auth.py                # Authentication logic
-│   ├── config.py              # Configuration
-│   ├── database.py            # Database setup
-│   ├── main.py                # FastAPI app
-│   ├── .env                   # Environment variables
-│   └── requirements.txt       # Python dependencies
-│
-├── docker/                    # Docker configuration
-├── docs/                      # Documentation
-└── README.md                  # This file
-```
+### Backend
+- **Framework**: FastAPI
+- **Database**: SQLAlchemy ORM (SQLite dev, PostgreSQL prod)
+- **Authentication**: JWT (JSON Web Tokens)
+- **Email**: SMTP (Gmail)
+- **Scheduler**: APScheduler
+- **AI**: Groq API (LLaMA 3.3 70B)
 
-### ⚡ One-Click Setup (Recommended)
+## 📦 Installation
 
-If you are on Windows, you can set up and deploy the entire project (including Database and Redis) with a single command:
+### Prerequisites
+- Node.js 18+ and npm
+- Python 3.11+
+- Git
 
-1. **Run Setup:**
-   ```powershell
-   ./setup.ps1
-   ```
-   This will install dependencies, generate secure `.env` files, and prepare the environment.
+### Backend Setup
 
-2. **Deploy with Docker:**
-   ```powershell
-   ./deploy.ps1
-   ```
-   This will build and start all services (Backend, Frontend, DB, Redis) in the background.
-
-**Access Points:**
-- Frontend: `http://localhost`
-- Backend API: `http://localhost/api/v1`
-- API Docs: `http://localhost:8000/docs`
-
----
-
-### 🛠️ Manual Setup (Development)
-
-If you prefer to run services manually for debugging:
-
-1. **Install Python dependencies:**
 ```bash
+# Navigate to backend folder
 cd backend
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# Windows:
+.\venv\Scripts\Activate.ps1
+# Linux/Mac:
+source venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
-```
 
-2. **Configure environment variables:**
-```bash
-# Edit backend/.env
-ENVIRONMENT=development
-DATABASE_URL=sqlite:///./lifemind.db
-SECRET_KEY=your-secret-key-here
-```
+# Create .env file (see .env.example)
+# Add your API keys and configuration
 
-3. **Run the backend:**
-```bash
-python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
+# Run database migrations (if any)
+# python migrate.py
 
-Backend will be available at: `http://localhost:8000`
-API Documentation: `http://localhost:8000/docs`
+# Start backend server
+uvicorn main:app --reload --port 8000
+```
 
 ### Frontend Setup
 
-1. **Install Node dependencies:**
 ```bash
+# Navigate to frontend folder
 cd frontend
+
+# Install dependencies
 npm install
-```
 
-2. **Configure environment variables:**
-```bash
-# Edit frontend/.env
-VITE_API_URL=http://localhost:8000/api/v1
-```
+# Create .env file (optional for local development)
+# VITE_API_URL=http://localhost:8000
 
-3. **Run the development server:**
-```bash
+# Start development server
 npm run dev
 ```
 
-Frontend will be available at: `http://localhost:5173`
+### Access the Application
 
-## 📚 API Documentation
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
 
-### Authentication Endpoints
+## 🔐 Environment Variables
 
-#### Register User
-```bash
-POST /api/v1/auth/register
-Content-Type: application/json
+### Backend (.env)
 
-{
-  "email": "user@example.com",
-  "username": "username",
-  "password": "securepassword",
-  "full_name": "John Doe"
-}
+```env
+# Database
+DATABASE_URL=sqlite:///./lifemind.db
+
+# JWT
+SECRET_KEY=your-secret-key-here
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# AI Services
+GROQ_API_KEY=your-groq-api-key
+
+# Email (Gmail)
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-gmail-app-password
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+
+# Features
+ENABLE_EMAIL_NOTIFICATIONS=true
+ENABLE_HABIT_REMINDERS=true
+ENABLE_TASK_REMINDERS=true
+SCHEDULER_ENABLED=true
 ```
 
-#### Login
-```bash
-POST /api/v1/auth/login
-Content-Type: application/json
+### Frontend (.env)
 
-{
-  "email": "user@example.com",
-  "password": "securepassword"
-}
+```env
+VITE_API_URL=http://localhost:8000
 ```
 
-### Expense Endpoints
+## 🚀 Deployment
 
-#### Create Expense
-```bash
-POST /api/v1/expenses
-Authorization: Bearer {token}
-Content-Type: application/json
+### Recommended: Render.com
 
-{
-  "title": "Lunch",
-  "amount": 250.00,
-  "category": "food",
-  "description": "Lunch at restaurant"
-}
-```
+**Quick Deploy**:
+1. Push code to GitHub
+2. Create PostgreSQL database on Render
+3. Deploy backend as Web Service
+4. Deploy frontend as Static Site
+5. Update CORS and environment variables
 
-#### Get All Expenses
-```bash
-GET /api/v1/expenses?skip=0&limit=20
-Authorization: Bearer {token}
-```
+**Detailed Guide**: See `RENDER_DEPLOYMENT_GUIDE.md`
 
-#### Get Expense Stats
-```bash
-GET /api/v1/expenses/stats/summary
-Authorization: Bearer {token}
-```
+**Quick Reference**: See `RENDER_QUICK_DEPLOY.txt`
 
-### Habit Endpoints
+### Other Options
+- **Vercel + Railway** - Free tier available
+- **AWS (EC2 + RDS)** - Production grade
+- **DigitalOcean** - Balanced option
 
-#### Create Habit
-```bash
-POST /api/v1/habits
-Authorization: Bearer {token}
-Content-Type: application/json
+## 📚 Documentation
 
-{
-  "name": "Morning Exercise",
-  "frequency": "daily",
-  "description": "30 minutes of exercise"
-}
-```
-
-#### Log Habit Completion
-```bash
-POST /api/v1/habits/{habit_id}/log
-Authorization: Bearer {token}
-```
-
-### Task Endpoints
-
-#### Create Task
-```bash
-POST /api/v1/tasks
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-  "title": "Complete project",
-  "priority": "high",
-  "description": "Finish the LifeMind AI project"
-}
-```
-
-### Mood Endpoints
-
-#### Log Mood Entry
-```bash
-POST /api/v1/mood
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-  "mood": "happy",
-  "energy_level": 8,
-  "stress_level": 3,
-  "notes": "Great day today!"
-}
-```
-
-## 🔐 Security Features
-
-- **JWT Authentication** - Secure token-based authentication
-- **Password Hashing** - Bcrypt password hashing
-- **CORS Protection** - Cross-origin request handling
-- **Input Validation** - Pydantic schema validation
-- **SQL Injection Protection** - SQLAlchemy parameterized queries
-- **Environment Variables** - Sensitive data management
-
-## 📊 Database Schema
-
-### Users Table
-- id (Primary Key)
-- email (Unique)
-- username (Unique)
-- hashed_password
-- full_name
-- is_active
-- created_at
-- updated_at
-
-### Expenses Table
-- id (Primary Key)
-- user_id (Foreign Key)
-- title
-- description
-- amount
-- category
-- date
-- created_at
-- updated_at
-
-### Habits Table
-- id (Primary Key)
-- user_id (Foreign Key)
-- name
-- description
-- frequency
-- status
-- streak
-- created_at
-- updated_at
-
-### Tasks Table
-- id (Primary Key)
-- user_id (Foreign Key)
-- title
-- description
-- priority
-- status
-- due_date
-- created_at
-- updated_at
-
-### Mood Entries Table
-- id (Primary Key)
-- user_id (Foreign Key)
-- mood
-- energy_level
-- stress_level
-- notes
-- date
-- created_at
-
-## 🎨 UI/UX Features
-
-- **Modern Dashboard** - Overview of all life metrics
-- **Smooth Animations** - Framer Motion transitions
-- **Responsive Design** - Mobile-first approach
-- **Dark/Light Mode** - Theme support
-- **Real-time Updates** - Live data synchronization
-- **Interactive Charts** - Recharts visualizations
-- **Intuitive Navigation** - Sidebar-based routing
+- **Deployment**: `RENDER_DEPLOYMENT_GUIDE.md` - Complete Render deployment guide
+- **Settings**: `SETTINGS_COMPLETE_REPORT.md` - Settings feature documentation
+- **Architecture**: `SETTINGS_ARCHITECTURE.md` - Technical architecture
+- **Testing**: `SETTINGS_TESTING_CHECKLIST.md` - Testing procedures
+- **Quick Start**: `SETTINGS_QUICK_START.md` - 5-minute setup guide
 
 ## 🧪 Testing
 
 ### Backend Tests
 ```bash
 cd backend
-pytest tests/
+pytest
 ```
 
 ### Frontend Tests
@@ -336,141 +185,106 @@ cd frontend
 npm run test
 ```
 
-### Docker Deployment
-
-The project is fully containerized. To manage the stack:
-
+### API Tests
 ```bash
-# Build and start everything
-docker-compose up --build -d
-
-# View status
-docker-compose ps
-
-# View logs
-docker-compose logs -f
-
-# Stop everything
-docker-compose down
+python test_settings_endpoints.py
 ```
 
-### Cloud Deployment
-
-#### Frontend (Vercel)
+### Complete Verification
 ```bash
-cd frontend
-npm run build
-vercel deploy
+python verify_all_settings_features.py
 ```
 
-#### Backend (Render)
-```bash
-# Push to GitHub
-git push origin main
+## 🎯 Features Status
 
-# Connect to Render and deploy
-```
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Authentication | ✅ Complete | JWT-based auth |
+| Dashboard | ✅ Complete | Real-time metrics |
+| Habits | ✅ Complete | Streak tracking |
+| Tasks | ✅ Complete | Priority management |
+| Expenses | ✅ Complete | Category tracking |
+| Mood | ✅ Complete | Energy & stress levels |
+| Meetings | ✅ Complete | With reminders |
+| Settings | ✅ Complete | 8 comprehensive sections |
+| AI Coach | ✅ Complete | Groq LLaMA 3.3 70B |
+| Email Notifications | ✅ Complete | SMTP configured |
+| Theme Switching | ✅ Complete | Instant preview |
 
-## 🔄 Development Workflow
+## 🔧 Troubleshooting
 
-1. **Create feature branch:**
-```bash
-git checkout -b feature/your-feature
-```
+### Common Issues
 
-2. **Make changes and commit:**
-```bash
-git add .
-git commit -m "feat: add your feature"
-```
+**Issue**: React version conflict
+**Solution**: See `REACT_VERSION_FIX.md`
 
-3. **Push and create PR:**
-```bash
-git push origin feature/your-feature
-```
+**Issue**: Email not sending
+**Solution**: Use Gmail App Password, not regular password
 
-## 📈 Performance Optimization
+**Issue**: Database connection error
+**Solution**: Check DATABASE_URL in .env
 
-- **Code Splitting** - Lazy loading components
-- **Image Optimization** - Compressed assets
-- **Caching** - Browser and server caching
-- **Database Indexing** - Optimized queries
-- **API Rate Limiting** - Prevent abuse
-- **CDN Integration** - Fast content delivery
-
-## 🐛 Troubleshooting
-
-### Backend Issues
-
-**Port already in use:**
-```bash
-# Kill process on port 8000
-lsof -ti:8000 | xargs kill -9
-```
-
-**Database errors:**
-```bash
-# Reset database
-rm backend/lifemind.db
-python -c "from backend.database import Base, engine; Base.metadata.create_all(bind=engine)"
-```
-
-### Frontend Issues
-
-**Dependencies not installing:**
-```bash
-rm -rf node_modules package-lock.json
-npm install
-```
-
-**Port 5173 in use:**
-```bash
-npm run dev -- --port 3000
-```
-
-## 📝 Environment Variables
-
-### Backend (.env)
-```
-ENVIRONMENT=development
-DATABASE_URL=sqlite:///./lifemind.db
-SECRET_KEY=your-secret-key
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
-GEMINI_API_KEY=your-gemini-key
-OPENAI_API_KEY=your-openai-key
-```
-
-### Frontend (.env)
-```
-VITE_API_URL=http://localhost:8000/api/v1
-```
+**Issue**: CORS error
+**Solution**: Update ALLOWED_ORIGINS in backend config
 
 ## 🤝 Contributing
 
+Contributions are welcome! Please follow these steps:
+
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 📄 License
+## 📝 License
 
-MIT License - feel free to use this project for personal or commercial purposes.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 👨‍💻 Author
+
+**Haresh**
+- GitHub: [@HARESH1501](https://github.com/HARESH1501)
+- Repository: [life_mind_ai](https://github.com/HARESH1501/life_mind_ai)
 
 ## 🙏 Acknowledgments
 
-- Built with modern web technologies
-- Inspired by Notion, ChatGPT, and Habitica
-- Community-driven development
+- **Groq** - For the amazing LLaMA 3.3 70B API
+- **FastAPI** - For the excellent Python framework
+- **React** - For the powerful frontend library
+- **Framer Motion** - For beautiful animations
+- **Render** - For easy deployment
 
-## 📞 Support
+## 📊 Project Stats
 
-For issues, questions, or suggestions:
-- Open an issue on GitHub
-- Contact: support@lifemindai.com
-- Documentation: https://docs.lifemindai.com
+- **Lines of Code**: ~15,000+
+- **Components**: 30+
+- **API Endpoints**: 50+
+- **Features**: 12 major features
+- **Documentation**: 15+ comprehensive guides
+
+## 🚀 Roadmap
+
+- [ ] Mobile app (React Native)
+- [ ] Social features (share habits, challenges)
+- [ ] Advanced AI analytics
+- [ ] Integration with fitness trackers
+- [ ] Voice commands
+- [ ] Multi-language support
+- [ ] Dark/Light theme presets
+- [ ] Custom dashboard widgets
+
+## 💡 Support
+
+For support, email haresh@example.com or open an issue on GitHub.
+
+## ⭐ Show Your Support
+
+Give a ⭐️ if this project helped you!
 
 ---
 
-**LifeMind AI** - Your AI-powered life optimization companion 🚀
+**Made with ❤️ by Haresh**
+
+🌐 **Live Demo**: Coming soon on Render
+📧 **Contact**: haresh@example.com

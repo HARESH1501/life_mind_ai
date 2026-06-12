@@ -17,7 +17,6 @@ import MeetingsPage from "./pages/MeetingsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
-import SettingsDrawer from "./components/SettingsDrawer";
 
 import "./App.css";
 
@@ -26,7 +25,6 @@ function App() {
   const hasCheckedUser = useRef(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     // Initialize theme
@@ -72,9 +70,7 @@ function App() {
                 <Sidebar
                   isOpen={sidebarOpen}
                   isCollapsed={sidebarCollapsed}
-                  onSettingsClick={() => setSettingsOpen(!settingsOpen)}
                 />
-                <SettingsDrawer isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
                 <div className="app-main" style={{ marginLeft: sidebarCollapsed ? "80px" : "280px" }}>
                   <Navbar
                     sidebarOpen={sidebarOpen}

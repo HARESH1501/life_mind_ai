@@ -1,566 +1,533 @@
-# Settings Module - Architecture & Data Flow
+# Settings Feature - Architecture & Data Flow
 
-## 🏗️ System Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                          USER BROWSER                                   │
-│  ┌───────────────────────────────────────────────────────────────────┐  │
-│  │            React Frontend - SettingsPage.jsx                      │  │
-│  │  ┌─────────────────────────────────────────────────────────────┐  │  │
-│  │  │  Form State (30+ settings)                                  │  │  │
-│  │  │  • accentColor, fontSize, density, soundNotifications       │  │  │
-│  │  │  • aiCoachEnabled, dailyAiInsights, expenseAnalysis         │  │  │
-│  │  │  • ... + 20 more fields                                     │  │  │
-│  │  └─────────────────────────────────────────────────────────────┘  │  │
-│  └───────────┬──────────────────────────────────────────────┬────────┘  │
-│              │                                              │            │
-│              ▼ handleSaveSettings()                          │ loadSettings()
-│         [convertFormToAPI()]                                 │            │
-│         [camelCase → snake_case]                             │            │
-│              │                                              │            │
-└──────────────┼──────────────────────────────────────────────┼────────────┘
-               │                                              │
-        ┌──────▼─────────────────────────────────────────────▼────────┐
-        │              settingsService.js (Axios)                     │
-        │  HTTP Client with JWT Authentication                        │
-        │  - PUT /settings (update all at once)                       │
-        │  - GET /settings (fetch all)                                │
-        │  - More granular endpoints available                        │
-        └──────┬──────────────────────────────────────────────┬───────┘
-               │                                              │
-               │ API Request (snake_case JSON)                │ API Response
-               │                                              │
-┌──────────────▼──────────────────────────────────────────────▼────────────┐
-│                      BACKEND - FastAPI                                   │
-│  ┌───────────────────────────────────────────────────────────────────┐   │
-│  │  routers/settings.py                                              │   │
-│  │  @router.put("/settings") → update_settings()                     │   │
-│  │  @router.get("/settings") → get_settings()                        │   │
-│  │                                                                   │   │
-│  │  Key Logic:                                                       │   │
-│  │  - Receive UserSettingsUpdate schema (validated)                  │   │
-│  │  - dict(exclude_unset=True) for flexible updates                  │   │
-│  │  - setattr() for dynamic field mapping                            │   │
-│  │  - Update database                                                │   │
-│  │  - Return UserSettingsResponse (complete object)                  │   │
-│  └───────────┬──────────────────────────────────────────────┬────────┘   │
-│              │                                              │            │
-│              ▼ SQLAlchemy ORM                               │            │
-│  ┌───────────────────────────────────────────────────────────────────┐   │
-│  │  models.py - UserSettings                                         │   │
-│  │  Columns (40+):                                                   │   │
-│  │  • theme, accent_color, font_size, ui_density                     │   │
-│  │  • notifications_enabled, sound_notifications                     │   │
-│  │  • email_notifications, welcome_email, daily_summary_email        │   │
-│  │  • reminder_time, meeting_alert_before, timezone                  │   │
-│  │  • ai_coach_enabled, daily_ai_insights, expense_analysis          │   │
-│  │  • productivity_suggestions, wellness_recommendations             │   │
-│  │  • two_factor_enabled, session_timeout, last_login                │   │
-│  │  • bio, profile_picture_url, language                             │   │
-│  │  ... (40+ fields total)                                           │   │
-│  └───────────┬──────────────────────────────────────────────┬────────┘   │
-│              │                                              │            │
-└──────────────▼──────────────────────────────────────────────▼────────────┘
-               │
-        ┌──────▼─────────────────────────────────────────────┐
-        │         SQLite Database                             │
-        │         user_settings table                         │
-        │         └─ One row per user (user_id unique)        │
-        │         └─ 40+ columns for all settings             │
-        │         └─ Timestamps for tracking changes          │
-        └──────────────────────────────────────────────────────┘
-```
-
----
-
-## 📊 Data Flow Diagrams
-
-### 1. Load Settings on Page Mount
+## System Architecture
 
 ```
-Component Mount
-    ↓
-useEffect(() => loadSettings())
-    ↓
-settingsService.getSettings()
-    ↓
-GET /settings [JWT Token]
-    ↓
-Backend: get_or_create_settings(user_id)
-    ↓
-Query: SELECT * FROM user_settings WHERE user_id = ?
-    ↓
-Return: UserSettingsResponse (all 40+ fields)
-    ↓
-Frontend: updateFromAPI(data)
-    ↓
-Update formState with all values
-    ↓
-Update settingsStore (Zustand)
-    ↓
-localStorage persists store
-    ↓
-UI renders with loaded settings
+┌─────────────────────────────────────────────────────────────────┐
+│                         FRONTEND                                 │
+│                  (React + Vite + Zustand)                        │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                │ HTTP/REST
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                         BACKEND API                              │
+│                    (FastAPI + SQLAlchemy)                        │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                │ ORM
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                         DATABASE                                 │
+│                    (SQLite / PostgreSQL)                         │
+│                                                                  │
+│  Tables: users, user_settings                                   │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### 2. Save Settings on Form Submit
+## Component Structure
 
 ```
-User clicks "Save Settings"
-    ↓
-handleSaveSettings() triggered
-    ↓
-convertFormToAPI(formState)
-    ├─ accentColor → accent_color
-    ├─ aiCoachEnabled → ai_coach_enabled
-    ├─ dailyAiInsights → daily_ai_insights
-    └─ ... (all 30+ fields converted)
-    ↓
-settingsService.updateSettings(apiPayload)
-    ↓
-PUT /settings {
-  "accent_color": "cyan",
-  "ai_coach_enabled": true,
-  "daily_ai_insights": true,
-  ... (snake_case)
-} [JWT Token]
-    ↓
-Backend: update_settings(settings_update)
-    ↓
-Pydantic validation: UserSettingsUpdate schema
-    ↓
-settings = get_or_create_settings(user_id)
-    ↓
-For each field in update_data:
-  setattr(settings, field, value)
-    ↓
-settings.updated_at = datetime.utcnow()
-    ↓
-db.commit()
-    ↓
-Return: Updated UserSettingsResponse
-    ↓
-Frontend receives response
-    ↓
-showToast("Settings saved successfully")
-    ↓
-loadSettings() refreshes data
-    ↓
-UI updates with confirmed values
+SettingsPage.jsx (Main Component)
+├── State Management
+│   ├── formState (local form data)
+│   ├── loading (page load state)
+│   ├── saving (save operation state)
+│   ├── toast (notification state)
+│   ├── passwordForm (password change form)
+│   ├── deletePassword (delete account form)
+│   └── hasChanges (unsaved changes flag)
+│
+├── Effects
+│   └── useEffect → loadSettings() on mount
+│
+├── Handlers
+│   ├── handleInputChange() - Update form field
+│   ├── handleToggle() - Toggle boolean field
+│   ├── handleSaveProfile() - Save profile data
+│   ├── handleSaveSettings() - Save general settings
+│   ├── handleChangePassword() - Change password
+│   ├── handleLogoutAllDevices() - Logout all sessions
+│   ├── handleSendTestEmail() - Send test email
+│   ├── handleExportData() - Export user data
+│   └── handleDeleteAccount() - Delete account
+│
+├── UI Sections
+│   ├── Profile Section
+│   ├── Appearance Section
+│   ├── Notifications Section
+│   ├── Email Section
+│   ├── Reminders Section
+│   ├── AI Coach Section
+│   ├── Security Section
+│   └── Data Management Section
+│
+└── Helper Components
+    ├── SectionHeader
+    ├── Toggle
+    └── PasswordField
 ```
 
-### 3. Nested Toggle Behavior
+## Data Flow Diagram
+
+### 1. Page Load Flow
 
 ```
-Master Toggle: notificationsEnabled
-    ├─ When ON (true)
-    │  ├─ Child toggles enabled (clickable)
-    │  ├─ habitReminders: clickable
-    │  ├─ taskReminders: clickable
-    │  ├─ meetingReminders: clickable
-    │  └─ dailySummary: clickable
-    │
-    └─ When OFF (false)
-       ├─ Child toggles disabled (grayed out)
-       ├─ Child values ignored on save
-       ├─ Previous states remembered
-       └─ Re-enable master → Children restore previous state
+User opens Settings Page
+        │
+        ▼
+Component mounts
+        │
+        ▼
+useEffect triggers
+        │
+        ▼
+loadSettings() called
+        │
+        ├─────────────────┐
+        │                 │
+        ▼                 ▼
+API: GET /settings/profile   API: GET /settings
+        │                 │
+        ▼                 ▼
+Profile Data          Settings Data
+        │                 │
+        └─────────┬───────┘
+                  │
+                  ▼
+        setFormState() updates UI
+                  │
+                  ▼
+        User sees populated form
 ```
 
----
+### 2. Profile Update Flow
 
-## 🔄 Field Naming Conversion
-
-### Frontend to Backend
-
-The JavaScript frontend uses camelCase, but the Python backend expects snake_case.
-
-```javascript
-// Frontend (JavaScript) - settingsForm.jsx
-const formState = {
-  accentColor: "cyan",           // camelCase
-  fontSize: "large",              // camelCase
-  density: "comfortable",          // camelCase
-  soundNotifications: true,        // camelCase
-  aiCoachEnabled: true,           // camelCase
-  dailyAiInsights: true,          // camelCase
-  expenseAnalysis: false,         // camelCase
-  productivitySuggestions: true,  // camelCase
-  wellnessRecommendations: false  // camelCase
-}
-
-// Conversion Function
-function convertFormToAPI(form) {
-  const converted = {};
-  for (const [key, value] of Object.entries(form)) {
-    converted[camelToSnake(key)] = value;
+```
+User edits profile fields
+        │
+        ▼
+handleInputChange() called
+        │
+        ▼
+formState updated
+        │
+        ▼
+hasChanges = true
+        │
+        ▼
+"Unsaved changes" indicator shows
+        │
+        ▼
+User clicks "Save Changes"
+        │
+        ▼
+handleSaveProfile() called
+        │
+        ▼
+API: PUT /settings/profile
+  {
+    full_name: "...",
+    bio: "..."
   }
-  return converted;
-}
-
-// Sent to Backend (snake_case)
-{
-  "accent_color": "cyan",              // snake_case
-  "font_size": "large",                // snake_case
-  "ui_density": "comfortable",         // snake_case
-  "sound_notifications": true,         // snake_case
-  "ai_coach_enabled": true,           // snake_case
-  "daily_ai_insights": true,          // snake_case
-  "expense_analysis": false,          // snake_case
-  "productivity_suggestions": true,   // snake_case
-  "wellness_recommendations": false   // snake_case
-}
+        │
+        ▼
+Backend validates & saves
+        │
+        ├─── Success ────┐
+        │                │
+        ▼                ▼
+  User.full_name    UserSettings.bio
+     updated           updated
+        │                │
+        └────────┬───────┘
+                 │
+                 ▼
+        200 OK response
+                 │
+                 ▼
+        Success toast shown
+                 │
+                 ▼
+        hasChanges = false
+                 │
+                 ▼
+        loadSettings() refreshes data
 ```
 
-### Backend to Frontend (Response)
-
-```python
-# Backend Response (Python) - UserSettingsResponse
-{
-  "id": 1,
-  "user_id": 1,
-  "theme": "dark",                    # snake_case
-  "accent_color": "cyan",             # snake_case
-  "font_size": "large",               # snake_case
-  "ui_density": "comfortable",        # snake_case
-  "sound_notifications": true,        # snake_case
-  "ai_coach_enabled": true,          # snake_case
-  "daily_ai_insights": true,         # snake_case
-  "expense_analysis": false,         # snake_case
-  "productivity_suggestions": true,  # snake_case
-  "wellness_recommendations": false, # snake_case
-  ...
-}
-
-// Frontend receives JSON
-// updateFromAPI() creates camelCase store state
-{
-  theme: 'dark',
-  accentColor: 'cyan',              // Converted to camelCase
-  fontSize: 'large',                // Converted to camelCase
-  density: 'comfortable',           // Converted to camelCase
-  soundNotifications: true,         // Converted to camelCase
-  aiCoachEnabled: true,            // Converted to camelCase
-  dailyAiInsights: true,           // Converted to camelCase
-  expenseAnalysis: false,          // Converted to camelCase
-  productivitySuggestions: true,   // Converted to camelCase
-  wellnessRecommendations: false   // Converted to camelCase
-  ...
-}
-```
-
----
-
-## 📦 Component Structure
+### 3. Settings Update Flow
 
 ```
-SettingsPage.jsx
-├── Header Section
-│   └─ Title + Icon + Description
-│
-├── Main Grid
-│   ├─ Sidebar Navigation
-│   │  └─ Section buttons (8 total)
-│   │     ├─ Appearance
-│   │     ├─ Notifications
-│   │     ├─ Email
-│   │     ├─ Reminders
-│   │     ├─ AI Coach
-│   │     ├─ Profile
-│   │     ├─ Security
-│   │     └─ Data Management
-│   │
-│   └─ Content Area
-│      ├─ Appearance Section
-│      │  ├─ Theme Selector (3 buttons)
-│      │  ├─ Color Grid (10 colors)
-│      │  ├─ Font Size Dropdown
-│      │  └─ UI Density Dropdown
-│      │
-│      ├─ Notifications Section
-│      │  ├─ Master Toggle
-│      │  └─ 6 Child Toggles
-│      │
-│      ├─ Email Section
-│      │  ├─ Master Toggle
-│      │  └─ 5 Child Toggles
-│      │
-│      ├─ Reminders Section
-│      │  ├─ Time Picker
-│      │  ├─ Alert Timing Dropdown
-│      │  └─ Timezone Dropdown
-│      │
-│      ├─ AI Coach Section
-│      │  ├─ Master Toggle
-│      │  └─ 4 Child Toggles
-│      │
-│      ├─ Profile Section
-│      │  ├─ Name Display
-│      │  ├─ Email Display
-│      │  ├─ Bio Text Input
-│      │  └─ Picture Upload
-│      │
-│      ├─ Security Section
-│      │  ├─ 2FA Toggle
-│      │  ├─ Session Timeout
-│      │  ├─ Active Sessions
-│      │  └─ Password Change
-│      │
-│      └─ Data Management Section
-│         ├─ Export Data Button
-│         ├─ Backup Button
-│         └─ Download Reports Button
-│
-└── Footer
-   ├─ Unsaved Changes Indicator
-   ├─ Reset Button
-   ├─ Save Button (with loading state)
-   └─ Toast Notification Container
+User toggles/changes settings
+        │
+        ▼
+handleToggle() or handleInputChange()
+        │
+        ▼
+formState updated
+        │
+        ▼
+hasChanges = true
+        │
+        ▼
+User clicks "Save Changes"
+        │
+        ▼
+handleSaveSettings() called
+        │
+        ▼
+API: PUT /settings
+  {
+    theme: "dark",
+    accent_color: "purple",
+    notifications_enabled: true,
+    email_notifications: true,
+    ...all settings fields...
+  }
+        │
+        ▼
+Backend validates each field
+        │
+        ▼
+UserSettings record updated
+        │
+        ▼
+200 OK response
+        │
+        ▼
+Success toast shown
+        │
+        ▼
+Zustand store updated
+        │
+        ▼
+UI reflects new settings
 ```
 
----
+### 4. Password Change Flow
 
-## 🗄️ Database Schema
+```
+User fills password fields
+        │
+        ├── Current Password
+        ├── New Password
+        └── Confirm Password
+        │
+        ▼
+User clicks "Change Password"
+        │
+        ▼
+handleChangePassword() validates
+        │
+        ├─── Check all fields filled
+        ├─── Check passwords match
+        └─── Check password strength
+        │
+        ▼
+API: POST /settings/change-password
+  {
+    current_password: "...",
+    new_password: "...",
+    confirm_password: "..."
+  }
+        │
+        ▼
+Backend validation
+        │
+        ├── Verify current password
+        ├── Check password strength
+        ├── Ensure not reusing password
+        └── Verify confirmation match
+        │
+        ▼
+Hash new password
+        │
+        ▼
+Update User.hashed_password
+        │
+        ▼
+Update UserSettings.last_password_change
+        │
+        ▼
+200 OK response
+        │
+        ▼
+Success toast shown
+        │
+        ▼
+Password fields cleared
+```
 
+### 5. Delete Account Flow
+
+```
+User clicks "Delete" in Danger Zone
+        │
+        ▼
+Delete confirmation modal opens
+        │
+        ▼
+User enters password
+        │
+        ▼
+User clicks "Delete My Account"
+        │
+        ▼
+handleDeleteAccount() called
+        │
+        ▼
+API: DELETE /settings/account
+  {
+    password: "...",
+    confirmation: true
+  }
+        │
+        ▼
+Backend verifies password
+        │
+        ├─── Password correct? ────┐
+        │                          │
+        NO                        YES
+        │                          │
+        ▼                          ▼
+    401 Error              Delete User record
+        │                          │
+        ▼                          ▼
+   Error toast           Cascade delete:
+        │                - UserSettings
+        │                - Tasks
+        │                - Habits
+        │                - Expenses
+        │                - Mood Entries
+        │                - Notifications
+        │                          │
+        │                          ▼
+        │                   200 OK response
+        │                          │
+        │                          ▼
+        │                   Success toast
+        │                          │
+        │                          ▼
+        │                   Wait 2 seconds
+        │                          │
+        │                          ▼
+        │                   logout() called
+        │                          │
+        │                          ▼
+        └──────────────────► Redirect to login
+```
+
+## Database Schema
+
+### Users Table
 ```sql
-CREATE TABLE user_settings (
-  -- Primary Keys
-  id INTEGER PRIMARY KEY,
-  user_id INTEGER UNIQUE NOT NULL,
-  
-  -- Appearance
-  theme VARCHAR DEFAULT 'system',
-  accent_color VARCHAR DEFAULT 'blue',
-  font_size VARCHAR DEFAULT 'medium',
-  ui_density VARCHAR DEFAULT 'comfortable',
-  
-  -- Notifications
-  notifications_enabled BOOLEAN DEFAULT 1,
-  email_notifications BOOLEAN DEFAULT 1,
-  browser_notifications BOOLEAN DEFAULT 1,
-  in_app_notifications BOOLEAN DEFAULT 1,
-  push_notifications BOOLEAN DEFAULT 1,
-  sound_notifications BOOLEAN DEFAULT 1,
-  
-  -- Reminders
-  habit_reminders BOOLEAN DEFAULT 1,
-  task_reminders BOOLEAN DEFAULT 1,
-  meeting_reminders BOOLEAN DEFAULT 1,
-  reminder_time VARCHAR DEFAULT '09:00',
-  
-  -- Email Preferences
-  email_habit_reminders BOOLEAN DEFAULT 1,
-  email_task_reminders BOOLEAN DEFAULT 1,
-  email_meeting_reminders BOOLEAN DEFAULT 1,
-  welcome_email BOOLEAN DEFAULT 1,
-  daily_summary BOOLEAN DEFAULT 1,
-  daily_summary_time VARCHAR DEFAULT '08:00',
-  daily_summary_email BOOLEAN DEFAULT 1,
-  
-  -- Meeting Alerts
-  meeting_alert_before INTEGER DEFAULT 15,
-  
-  -- AI Coach
-  ai_coach_enabled BOOLEAN DEFAULT 1,
-  daily_ai_insights BOOLEAN DEFAULT 1,
-  expense_analysis BOOLEAN DEFAULT 1,
-  productivity_suggestions BOOLEAN DEFAULT 1,
-  wellness_recommendations BOOLEAN DEFAULT 1,
-  
-  -- Profile
-  bio VARCHAR,
-  profile_picture_url VARCHAR,
-  
-  -- Preferences
-  language VARCHAR DEFAULT 'en',
-  timezone VARCHAR DEFAULT 'UTC',
-  
-  -- Security
-  two_factor_enabled BOOLEAN DEFAULT 0,
-  session_timeout INTEGER DEFAULT 30,
-  
-  -- Tracking
-  last_login DATETIME,
-  last_password_change DATETIME,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  
-  FOREIGN KEY (user_id) REFERENCES users(id)
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    full_name VARCHAR(255),
+    hashed_password VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
----
-
-## 🔐 Authentication & Authorization
-
-All settings endpoints require JWT authentication:
-
+### UserSettings Table
+```sql
+CREATE TABLE user_settings (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER UNIQUE NOT NULL,
+    
+    -- Profile
+    bio TEXT,
+    profile_picture_url VARCHAR(500),
+    
+    -- Appearance
+    theme VARCHAR(20) DEFAULT 'system',
+    accent_color VARCHAR(20) DEFAULT 'blue',
+    font_size VARCHAR(20) DEFAULT 'medium',
+    ui_density VARCHAR(20) DEFAULT 'comfortable',
+    
+    -- Notifications
+    notifications_enabled BOOLEAN DEFAULT TRUE,
+    email_notifications BOOLEAN DEFAULT TRUE,
+    browser_notifications BOOLEAN DEFAULT TRUE,
+    in_app_notifications BOOLEAN DEFAULT TRUE,
+    push_notifications BOOLEAN DEFAULT FALSE,
+    sound_notifications BOOLEAN DEFAULT TRUE,
+    
+    -- Reminders
+    habit_reminders BOOLEAN DEFAULT TRUE,
+    task_reminders BOOLEAN DEFAULT TRUE,
+    meeting_reminders BOOLEAN DEFAULT TRUE,
+    reminder_time VARCHAR(5) DEFAULT '09:00',
+    
+    -- Email Preferences
+    email_habit_reminders BOOLEAN DEFAULT TRUE,
+    email_task_reminders BOOLEAN DEFAULT TRUE,
+    email_meeting_reminders BOOLEAN DEFAULT TRUE,
+    welcome_email BOOLEAN DEFAULT TRUE,
+    daily_summary BOOLEAN DEFAULT TRUE,
+    daily_summary_time VARCHAR(5) DEFAULT '18:00',
+    daily_summary_email BOOLEAN DEFAULT TRUE,
+    
+    -- Meeting Alerts
+    meeting_alert_before INTEGER DEFAULT 15,
+    
+    -- AI Coach
+    ai_coach_enabled BOOLEAN DEFAULT TRUE,
+    daily_ai_insights BOOLEAN DEFAULT TRUE,
+    expense_analysis BOOLEAN DEFAULT TRUE,
+    productivity_suggestions BOOLEAN DEFAULT TRUE,
+    wellness_recommendations BOOLEAN DEFAULT TRUE,
+    
+    -- Preferences
+    language VARCHAR(5) DEFAULT 'en',
+    timezone VARCHAR(50) DEFAULT 'UTC',
+    
+    -- Security
+    two_factor_enabled BOOLEAN DEFAULT FALSE,
+    session_timeout INTEGER DEFAULT 30,
+    last_login DATETIME,
+    last_password_change DATETIME,
+    
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 ```
-Request Header:
-Authorization: Bearer <JWT_TOKEN>
 
-Token payload includes:
+## API Endpoints Summary
+
+### Profile Endpoints
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| GET | `/settings/profile` | Get user profile | - | UserResponse |
+| PUT | `/settings/profile` | Update profile | ProfileUpdate | UserResponse |
+| POST | `/settings/profile/upload-picture` | Upload picture | FormData | {message, url} |
+
+### Settings Endpoints
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| GET | `/settings` | Get all settings | - | UserSettingsResponse |
+| PUT | `/settings` | Update settings | UserSettingsUpdate | UserSettingsResponse |
+| PUT | `/settings/appearance` | Update appearance | AppearanceUpdate | UserSettingsResponse |
+| PUT | `/settings/notifications` | Update notifications | NotificationPreferencesUpdate | UserSettingsResponse |
+| PUT | `/settings/email-preferences` | Update email prefs | EmailPreferencesUpdate | UserSettingsResponse |
+| PUT | `/settings/security` | Update security | SecurityUpdate | UserSettingsResponse |
+
+### Action Endpoints
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| POST | `/settings/change-password` | Change password | PasswordChange | {message, status} |
+| POST | `/settings/test-email` | Send test email | - | {message, status} |
+| POST | `/settings/logout-all-devices` | Logout all sessions | - | {message, status} |
+| POST | `/settings/export-data` | Export user data | - | {message, status} |
+| DELETE | `/settings/account` | Delete account | DeleteAccountRequest | {message, status} |
+
+## State Management (Zustand)
+
+### Settings Store
+```javascript
 {
-  "sub": user_id,
-  "email": user_email,
-  "exp": expiration_time
+  // Appearance
+  theme: 'dark',
+  accentColor: 'cyan',
+  fontSize: 'medium',
+  uiDensity: 'comfortable',
+  
+  // Actions
+  setTheme: (theme) => { ... },
+  setAccentColor: (color) => { ... },
+  updateFromAPI: (data) => { ... }
 }
-
-Backend Validation:
-1. Extract token from Authorization header
-2. Verify JWT signature
-3. Check token expiration
-4. Extract user_id
-5. Load settings for that user_id
-6. Return only their data
 ```
+
+### Auth Store
+```javascript
+{
+  user: { id, email, username, full_name },
+  token: 'jwt_token',
+  
+  // Actions
+  login: (credentials) => { ... },
+  logout: () => { ... },
+  setUser: (user) => { ... }
+}
+```
+
+## Security Considerations
+
+### Frontend
+1. **Password Visibility Toggles**: Allow users to verify typed passwords
+2. **Validation**: Client-side validation before API calls
+3. **Loading States**: Prevent duplicate submissions
+4. **Secure Storage**: JWT token in localStorage with expiration
+
+### Backend
+1. **Password Hashing**: bcrypt with salt
+2. **JWT Authentication**: All endpoints require valid token
+3. **Input Validation**: Pydantic schemas validate all inputs
+4. **SQL Injection Protection**: SQLAlchemy ORM
+5. **CORS**: Configured for frontend origin only
+6. **Rate Limiting**: Prevent brute force attacks (future)
+
+## Error Handling
+
+### Frontend
+```javascript
+try {
+  await settingsService.updateProfile(data);
+  showToast('Profile saved successfully', 'success');
+} catch (error) {
+  showToast(
+    error.response?.data?.detail || 'Failed to save profile',
+    'error'
+  );
+}
+```
+
+### Backend
+```python
+@router.put("/profile")
+def update_profile(profile: ProfileUpdate, user: User = Depends(get_current_user)):
+    try:
+        # Validation
+        if len(profile.bio) > 500:
+            raise HTTPException(400, "Bio too long")
+        
+        # Update
+        user.full_name = profile.full_name
+        db.commit()
+        
+        return user
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(500, str(e))
+```
+
+## Performance Optimizations
+
+1. **Parallel API Calls**: Profile and settings load simultaneously
+2. **Debounced Inputs**: Prevent excessive API calls (future)
+3. **Optimistic Updates**: Theme changes apply before save
+4. **Lazy Loading**: Only load settings when page is visited
+5. **Caching**: Settings cached in Zustand store
+
+## Future Enhancements
+
+1. **Real-time Sync**: WebSocket for multi-device sync
+2. **Undo/Redo**: History of changes with undo capability
+3. **Import Settings**: Import from JSON/backup
+4. **Settings Profiles**: Save and switch between profiles
+5. **Advanced Security**: 2FA, Security keys, Biometric
+6. **Audit Log**: Track all settings changes
+7. **Dark/Light Mode Schedule**: Auto-switch at specific times
+8. **Custom Themes**: User-created color schemes
 
 ---
 
-## 📈 Performance Characteristics
-
-### Load Settings
-- **Time Complexity**: O(1) - Direct user_id lookup
-- **Space Complexity**: O(n) - Where n = number of fields (~40)
-- **Average Response Time**: ~50ms (local network)
-
-### Update Settings
-- **Time Complexity**: O(n) - Where n = number of updated fields
-- **Database Query**: Single UPDATE statement
-- **Average Response Time**: ~100ms (includes disk write)
-
-### Form Rendering
-- **Initial Render**: ~500ms (includes CSS parsing)
-- **Interaction Response**: <16ms (60fps animations)
-- **Reflow on Input**: <8ms (GPU accelerated)
-
-### Storage
-- **Database Size**: ~2KB per user
-- **Frontend localStorage**: ~50KB (all sessions + settings)
-- **Session Memory**: ~100KB (form state + store)
-
----
-
-## 🔗 Related API Endpoints
-
-```
-GET    /settings                    Get all user settings
-PUT    /settings                    Update multiple settings
-GET    /settings/profile            Get profile
-PUT    /settings/profile            Update profile
-POST   /settings/profile/upload-picture  Upload picture
-GET    /settings/appearance         Get appearance
-PUT    /settings/appearance         Update appearance
-GET    /settings/notifications      Get notifications
-PUT    /settings/notifications      Update notifications
-GET    /settings/email-preferences  Get email prefs
-PUT    /settings/email-preferences  Update email prefs
-GET    /settings/security           Get security
-PUT    /settings/security           Update security
-POST   /settings/change-password    Change password
-GET    /settings/account-info       Get account info
-POST   /settings/logout-all-devices Logout all sessions
-POST   /settings/export-data        Export data
-DELETE /settings/account            Delete account
-```
-
----
-
-## 📝 State Management Timeline
-
-```
-App Load
-  ↓
-[SettingsPage Mount]
-  ↓
-useEffect() → loadSettings()
-  ↓
-API: GET /settings
-  ↓
-[Settings Loaded]
-  ↓
-formState initialized
-settingsStore updated
-localStorage saved
-  ↓
-[User Views Settings]
-  ↓
-User interacts with form
-  ↓
-handleInputChange() → setFormState()
-  ↓
-[Form State Updated]
-  ↓
-Local component state only (not persisted yet)
-  ↓
-User clicks "Save"
-  ↓
-[handleSaveSettings()]
-  ↓
-convertFormToAPI()
-  ↓
-API: PUT /settings {converted data}
-  ↓
-[Backend Validation & Save]
-  ↓
-API Response: UserSettingsResponse (updated)
-  ↓
-[Frontend Updates]
-  ↓
-settingsStore.updateFromAPI()
-localStorage.setItem()
-loadSettings() for confirmation
-  ↓
-[UI Shows Success Toast]
-  ↓
-[Settings Persisted]
-```
-
----
-
-## 🧪 Testing Strategy
-
-### Unit Tests
-- Field conversion functions (camelCase ↔ snake_case)
-- Validation logic for each setting
-- Default value handling
-
-### Integration Tests
-- Database read/write operations
-- API endpoint responses
-- Schema validation
-
-### E2E Tests
-- Full user flow (load → edit → save)
-- Form validation and error handling
-- Settings persistence across sessions
-- Responsive design on different devices
-
----
-
-## 📱 Responsive Breakpoints
-
-```
-Mobile    (< 768px)   → Single column, collapsible sidebar
-Tablet    (768-1024px)→ Two columns, fixed sidebar
-Desktop   (> 1024px)  → Three columns, full layout
-```
-
----
-
-## ✅ Production Checklist
-
-- [x] Database schema created
-- [x] Models defined
-- [x] Schemas validated
-- [x] API endpoints implemented
-- [x] Frontend components built
-- [x] Data conversion logic working
-- [x] Error handling in place
-- [x] Tests passing
-- [x] Documentation complete
-- [x] Security verified
-- [x] Performance optimized
-- [x] Ready for deployment
-
+**Architecture Version**: 1.0  
+**Last Updated**: June 12, 2026  
+**Status**: Production Ready ✅
