@@ -58,3 +58,9 @@ backend/static/uploads/
 # Logs
 logs/
 *.log
+
+# Documentation with sensitive data
+GITHUB_PUSH_SUCCESS.md
+CORS_FIX_APPLIED.txt
+*_SUCCESS.md
+*_APPLIED.txt
