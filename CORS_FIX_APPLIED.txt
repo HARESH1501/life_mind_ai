@@ -1,0 +1,33 @@
+﻿# CORS and API URL Fix Applied
+
+## Changes Made
+
+### 1. Backend CORS Configuration (backend/config.py)
+BEFORE:
+ALLOWED_ORIGINS = "http://localhost:5173,http://localhost:3000"
+
+AFTER:
+ALLOWED_ORIGINS = "http://localhost:5173,http://localhost:3000,https://life-mind-frontend.onrender.com"
+
+### 2. Frontend Production API URL (frontend/.env.production)
+BEFORE:
+VITE_API_URL=https://lifemind-api.onrender.com
+
+AFTER:
+VITE_API_URL=https://life-mind-ai.onrender.com/api/v1
+
+## Render Setup Instructions
+
+### Backend Environment Variables (life-mind-ai service)
+Add this in Render Dashboard:
+
+ALLOWED_ORIGINS=https://life-mind-frontend.onrender.com,http://localhost:5173,http://localhost:3000
+
+### Frontend Environment Variables (life-mind-frontend service)
+VITE_API_URL=https://life-mind-ai.onrender.com/api/v1
+
+## API Endpoints
+All endpoints use /api/v1 prefix:
+- Login: https://life-mind-ai.onrender.com/api/v1/auth/login
+- Register: https://life-mind-ai.onrender.com/api/v1/auth/register
+- Settings: https://life-mind-ai.onrender.com/api/v1/settings/*

@@ -1,4 +1,4 @@
-"""
+﻿"""
 Configuration management for LifeMind AI Backend
 Handles environment variables, database config, and app settings
 """
@@ -34,7 +34,7 @@ PROJECT_VERSION = "1.0.0"
 # CORS
 ALLOWED_ORIGINS = os.getenv(
     "ALLOWED_ORIGINS",
-    "http://localhost:5173,http://localhost:3000"
+    "http://localhost:5173,http://localhost:3000,https://life-mind-frontend.onrender.com"
 ).split(",")
 
 # AI
